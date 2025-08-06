@@ -1,0 +1,192 @@
+{
+  "name": "Quire API Example",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -160
+      ],
+      "id": "aff5b65e-ee97-495f-aa3e-4c8f6c520aba",
+      "name": "FlowTrigger"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Quire api url'] }}/task/list/id/{{ $json['Project Id'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        -160
+      ],
+      "id": "54d14959-2edf-4c2e-935b-a1d1e34fdb9f",
+      "name": "Get all tasks of project",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Setup variables').item.json['Quire api url'] }}/project/id/{{ $('Setup variables').item.json['Project Id'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"addFollowers\": [\"app\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        -160
+      ],
+      "id": "4d12a499-870c-43d2-835e-15dbcf99884d",
+      "name": "Setup webhook",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aaeabaab-9924-4734-b6c7-871001606972",
+              "name": "Project Id",
+              "value": "project59",
+              "type": "string"
+            },
+            {
+              "id": "00bd13b2-84bf-4d60-b48e-c5e8ebd9e748",
+              "name": "Quire api url",
+              "value": "https://quire.io/api",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        -160
+      ],
+      "id": "d9b23160-162a-4ddd-9b18-498009690a0f",
+      "name": "Setup variables"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d0970930-6f8e-4b43-a418-a48c856ba532",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -400,
+        48
+      ],
+      "id": "c98d155f-ecab-41d1-91b9-9d6809f869f2",
+      "name": "Webhook",
+      "webhookId": "d0970930-6f8e-4b43-a418-a48c856ba532"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "append",
+              "field": "body.data.text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        48
+      ],
+      "id": "bc8ba33f-2f4d-4452-ac06-119cb5f02675",
+      "name": "Summarize"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "FlowTrigger": {
+      "main": [
+        [
+          {
+            "node": "Setup variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all tasks of project": {
+      "main": [
+        [
+          {
+            "node": "Setup webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup variables": {
+      "main": [
+        [
+          {
+            "node": "Get all tasks of project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "37241f5f-3c1d-468d-82f8-30e5c7787dcd",
+  "meta": {
+    "instanceId": "c0622c7d8daf905418bed3a37676690cb0d11518830fe32ceda24e1c3e35bd6f"
+  },
+  "id": "tK4O4YrpuzPXMaoH",
+  "tags": []
+}

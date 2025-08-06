@@ -1,0 +1,33 @@
+{
+  "name": "n8n-quire-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "update-method-list": "node scripts/genTaskApiList.js",
+    "start": "tsc && cross-env NODE_ENV=production node -r dotenv/config dist/app.js",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' -r dotenv/config src/app.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quire-io/n8n-quire-api.git"
+  },
+  "author": "Whiterzi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quire-io/n8n-quire-api/issues"
+  },
+  "homepage": "https://github.com/quire-io/n8n-quire-api#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "cross-env": "^10.0.0",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "path": "^0.12.7"
+  }
+}
