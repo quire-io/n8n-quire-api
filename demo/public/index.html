@@ -71,7 +71,7 @@
       addOrUpdateTask(name);
     });
     document.getElementById('clear-db-btn').addEventListener('click', function() {
-      if (!confirm('確定要清空所有任務？')) return;
+      if (!confirm('Are you sure to clear all the tasks')) return;
       fetch('/api/clearDb', { method: 'POST' })
         .then(res => res.json())
         .then(() => fetchTasks());
