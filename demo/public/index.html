@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQLite Task Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-4">
+    <h2>Task List</h2>
+    <form id="task-form" class="mb-3 d-flex">
+      <input type="text" id="task-input" class="form-control me-2" placeholder="Enter new task" required>
+      <button type="submit" class="btn btn-primary me-2">Add Task</button>
+      <button type="button" id="clear-db-btn" class="btn btn-danger">Clear DB</button>
+    </form>
+    <div class="mb-2" id="last-updated">Last updated at: --</div>
+    <table class="table table-bordered">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Status</th></tr>
+      </thead>
+      <tbody id="task-list"></tbody>
+    </table>
+  </div>
+  <script>
+    function updateLastUpdated() {
+      const now = new Date();
+      const str = now.toLocaleString();
+      document.getElementById('last-updated').textContent = 'Last updated at: ' + str;
+    }
+    function fetchTasks() {
+      fetch('/api/getAllTask')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('task-list');
+          tbody.innerHTML = '';
+          data.forEach(t => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${t.id}</td><td>${t.name}</td><td>${t.status}</td>`;
+            tbody.appendChild(row);
+          });
+          updateLastUpdated();
+        });
+    }
+    function addOrUpdateTask(name) {
+      fetch('/api/upsertTask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, triggerN8N: true })
+      })
+      .then(res => res.json())
+      .then(() => {
+        document.getElementById('task-input').value = '';
+        fetchTasks();
+      });
+    }
+    function deleteTask(name) {
+      fetch('/api/deleteTask', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => res.json())
+      .then(() => fetchTasks());
+    }
+    document.getElementById('task-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('task-input');
+      const name = input.value.trim();
+      if (!name) return;
+      addOrUpdateTask(name);
+    });
+    document.getElementById('clear-db-btn').addEventListener('click', function() {
+      if (!confirm('確定要清空所有任務？')) return;
+      fetch('/api/clearDb', { method: 'POST' })
+        .then(res => res.json())
+        .then(() => fetchTasks());
+    });
+    setInterval(fetchTasks, 5000);
+    fetchTasks();
+  </script>
+</body>
+</html>

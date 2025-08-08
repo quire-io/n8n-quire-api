@@ -1,0 +1,360 @@
+{
+  "name": "QuireNodeSync",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d19a9be-a17a-44e9-8d05-8747a217211a",
+              "name": "Project ID",
+              "value": "project59",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        96,
+        -96
+      ],
+      "id": "b75afc63-1e25-442c-b26b-c4ab7f75e9e6",
+      "name": "Setup project ID"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://quire.io/api/task/id/{{ $json['Project ID'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $('Post From Client').item.json.body.name }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        -96
+      ],
+      "id": "856e6a04-dfea-4f72-a787-219068bfdd4d",
+      "name": "CreateTask",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "14309cb8-d4ff-4ea3-bbcb-5e6e6e762497",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        -96
+      ],
+      "id": "7afa3c46-5d1a-45e0-86c1-fb0a76ed8791",
+      "name": "Post From Client",
+      "webhookId": "14309cb8-d4ff-4ea3-bbcb-5e6e6e762497"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "80186973-d52f-4c5f-a4ac-e0ecbf1fc2c4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        64
+      ],
+      "id": "ef1f32fe-417e-4845-acb2-0eb5bfba3df0",
+      "name": "Post From Quire",
+      "webhookId": "80186973-d52f-4c5f-a4ac-e0ecbf1fc2c4"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data.type }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "cd4b7733-8a07-47f7-a128-fc0ac62ee17f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        64
+      ],
+      "id": "8ac95894-1cb9-437c-9e25-03cb0496f2b0",
+      "name": "Task added"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data.type }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "cd4b7733-8a07-47f7-a128-fc0ac62ee17f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        240
+      ],
+      "id": "1dea8052-d6a1-4c6f-987a-3aa4075ecbc3",
+      "name": "Task deleted"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3000/api/upsertTask",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.body.data.what.name }}\",\n  \"status\": \"{{ $json.body.data.what.status.name }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        64
+      ],
+      "id": "ba749dc6-246f-4e9d-9212-f062a5ac28dd",
+      "name": "Add task to node server"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://host.docker.internal:3000/api/deleteTask",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.body.data.what.name }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        240
+      ],
+      "id": "92d78e88-7b32-4a35-9a80-5cbf9d0b1672",
+      "name": "Delete task from node server"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d19a9be-a17a-44e9-8d05-8747a217211a",
+              "name": "Project ID",
+              "value": "project59",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        96,
+        -272
+      ],
+      "id": "bc412617-9e2f-49be-80a6-599f4bd1bb9d",
+      "name": "Setup project ID2"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://quire.io/api/project/id/{{ $json['Project ID'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"addFollowers\": [\"app\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        -272
+      ],
+      "id": "bce1d082-812d-488e-8647-373a5366340f",
+      "name": "Turn on webhook",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "activate"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -272
+      ],
+      "id": "1096f9a7-b173-4be4-bf15-285633e2cfd3",
+      "name": "On workflow activated"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Setup project ID": {
+      "main": [
+        [
+          {
+            "node": "CreateTask",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post From Client": {
+      "main": [
+        [
+          {
+            "node": "Setup project ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post From Quire": {
+      "main": [
+        [
+          {
+            "node": "Task added",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Task deleted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Task added": {
+      "main": [
+        [
+          {
+            "node": "Add task to node server",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Task deleted": {
+      "main": [
+        [
+          {
+            "node": "Delete task from node server",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup project ID2": {
+      "main": [
+        [
+          {
+            "node": "Turn on webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On workflow activated": {
+      "main": [
+        [
+          {
+            "node": "Setup project ID2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "60fc873e-fa53-4fbd-892b-7f12445ef290",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c0622c7d8daf905418bed3a37676690cb0d11518830fe32ceda24e1c3e35bd6f"
+  },
+  "id": "3lCTDEva4WTXKn6B",
+  "tags": []
+}
