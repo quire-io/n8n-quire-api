@@ -99,6 +99,7 @@ Go to your n8n workspace and import it into your workflow.
 This template demonstrates two-way syncing between a local database and a Quire project.
 
 ### Setup
+---
 
 #### n8n Settings
 
@@ -112,6 +113,8 @@ You can find the project ID in your project settings or in the project URL.
 
 For example, the project ID here is `project59`.
 
+---
+
 #### Quire App
 
 There are two `webhook` nodes in this template. To set up webhook events from Quire, open the configuration of the `Post From Quire` node and copy the webhook URL.
@@ -123,6 +126,8 @@ Paste this URL into your Quire App settings.
 ![appsetting](./imgs/quire-appsetting.png)
 
 The URL should be `${your-n8n-host}/webhook/${path}`.
+
+---
 
 #### Node Server
 
@@ -141,6 +146,8 @@ Open [server.ts](./demo/server.ts) and replace the value of `N8N_WEBHOOK_URL` wi
 ```ts
 const N8N_WEBHOOK_URL = `${your-n8n-webhook-url}`
 ```
+
+---
 
 ### Run Demo
 
