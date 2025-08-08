@@ -14,7 +14,7 @@ After hosting the n8n server, open the n8n workspace. The default URL is `http:/
 
 To access the Quire API, you need to create and install a Quire app first.
 
-Once the app is created, obtain the *Client ID* and *Client Secret* from the app settings. These credentials will be used for authentication.
+Once the app is created, obtain the **Client ID** and **Client Secret** from the app settings. These credentials will be used for authentication.
 
 ### 3. Create a Workflow
 
