@@ -3,10 +3,16 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import axios from 'axios';
+/**
+ * This code simulates a simple internal ERP system.
+ * By integrating with the n8n service, the local database can seamlessly synchronize with Quire.
+ */
 
 const N8N_WEBHOOK_URL = "http://localhost:5678/webhook/14309cb8-d4ff-4ea3-bbcb-5e6e6e762497";
 
 const app = express();
+
+// Database setup: using SQLite for demonstration purposes
 const dbPath = path.join(__dirname, 'tasks.db');
 const db = new Database(dbPath);
 
@@ -21,6 +27,9 @@ db.serialize(() => {
   )`);
 });
 
+/**
+ * API endpoint for the client (demo ERP page) to retrieve all tasks from the local database.
+ */
 app.get('/api/getAllTask', (_: Request, res: Response) => {
   db.all('SELECT * FROM tasks', (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -28,6 +37,28 @@ app.get('/api/getAllTask', (_: Request, res: Response) => {
   });
 });
 
+/**
+ * API endpoint for creating or updating a task, accessible by both the client and n8n.
+ *
+ * Request body:
+ *   - name: string (required) — The name of the task.
+ *   - status: string (optional) — The status of the task. Defaults to 'pending' if not provided.
+ *   - triggerN8N: boolean (optional) — If true, triggers the n8n webhook after the operation.
+ *
+ * Functionality:
+ *   - If a task with the specified name exists, its status will be updated.
+ *   - If no such task exists, a new task will be created with the provided name and status.
+ *   - If triggerN8N is true, a POST request containing the task information will be sent to the n8n webhook.
+ *
+ * Response:
+ *   - { updated: true, id } if the task was updated
+ *   - { inserted: true, id } if a new task was created
+ *
+ *
+ * Client update flow:
+ *   client [upsertTask] → {task: pending} → n8n updates Quire → Quire updated, sends event to n8n
+ *   → n8n posts to [upsertTask] → task name exists, status updated → {task: to-do (Quire default status)}
+ */
 app.post('/api/upsertTask', async (req: Request, res: Response) => {
   const { name, status, triggerN8N } = req.body;
   if (!name) return res.status(400).json({ error: 'Missing task name' });
@@ -49,6 +80,11 @@ app.post('/api/upsertTask', async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * API endpoint for n8n to call when a Quire task is deleted.
+ *
+ * This will remove the corresponding task from the local database by name.
+ */
 app.delete('/api/deleteTask', (req: Request, res: Response) => {
   const { name } = req.body;
   if (!name) return res.status(400).json({ error: 'Missing task name' });
@@ -58,6 +94,9 @@ app.delete('/api/deleteTask', (req: Request, res: Response) => {
   });
 });
 
+/**
+ * API endpoint for the client to clear all tasks from the local SQLite database.
+ */
 app.post('/api/clearDb', (_: Request, res: Response) => {
   db.run('DELETE FROM tasks', err => {
     if (err) return res.status(500).json({ error: err.message });

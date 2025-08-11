@@ -1,0 +1,268 @@
+{
+  "name": "Update Task Data",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        0
+      ],
+      "id": "4abb1401-94ba-4af7-9209-f425d7bc16d6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "=https://quire.io/api/task/{{ $json.oid }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        96,
+        0
+      ],
+      "id": "8afb8134-d60e-44a6-9f65-51ad4a5c8746",
+      "name": "Get data of the task by oid",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96a65acf-58aa-4924-86eb-1157d27ff55e",
+              "name": "new description",
+              "value": "=Hello, you have a task named '{{ $json.name }}' and the id is '{{ $json.id }}'. It's created at {{ $json.createdAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        0
+      ],
+      "id": "b32a1afe-cb01-4678-8ddb-d68ab2c323c6",
+      "name": "Transform data"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=http://quire.io/api/task/{{ $('Get data of the task by oid').item.json.oid }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"description\": \"{{ $json['new description'] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        0
+      ],
+      "id": "914d0a4e-1b84-4974-8f69-427658e1700a",
+      "name": "Update task",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Get task oid\nCould be replace with any other method which can get the oid.",
+        "height": 224,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        -80
+      ],
+      "id": "bb53c245-c268-49a0-a347-645f428d35b0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://quire.io/api/task/id/{{ $('Setup Project ID').item.json['Project ID'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json['Task name'] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "5ece79fa-480b-4c3c-846b-978f1f1f3c14",
+      "name": "Create a task",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Modify data\n",
+        "height": 224,
+        "width": 160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -80
+      ],
+      "id": "92e5827e-43b0-4912-93e3-74243a22981d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "556905a4-0956-47a3-9ba1-7f4b6b7ed66e",
+              "name": "Task name",
+              "value": "Hello a task from n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        0
+      ],
+      "id": "fae6df6e-770e-4e3b-839b-3229f46da223",
+      "name": "Set task name"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bedd3272-5ec8-4e16-b94d-8bca8d51c4fc",
+              "name": "Project ID",
+              "value": "project59",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -496,
+        0
+      ],
+      "id": "3eef999f-b1c5-4529-bb0a-f0472e1b50fa",
+      "name": "Setup Project ID"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Setup Project ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get data of the task by oid": {
+      "main": [
+        [
+          {
+            "node": "Transform data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform data": {
+      "main": [
+        [
+          {
+            "node": "Update task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task": {
+      "main": [
+        [
+          {
+            "node": "Get data of the task by oid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set task name": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Project ID": {
+      "main": [
+        [
+          {
+            "node": "Set task name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0f5d0d0-4fda-4b28-a0da-d8dc85c9b917",
+  "meta": {
+    "instanceId": "c0622c7d8daf905418bed3a37676690cb0d11518830fe32ceda24e1c3e35bd6f"
+  },
+  "id": "W27OihPudSurBXie",
+  "tags": []
+}
