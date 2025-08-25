@@ -1,28 +1,96 @@
 {
-  "name": "QuireNodeSync",
+  "name": "Quire Two-Way Sync Template",
   "nodes": [
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "2d19a9be-a17a-44e9-8d05-8747a217211a",
-              "name": "Project ID",
-              "value": "project59",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
+        "content": "## Configure the Project ID\nEnsure that the Project ID matches the one previously assigned. This enables the API to accurately identify and interact with the appropriate project.",
+        "height": 560,
+        "width": 368
       },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
       "position": [
-        96,
-        -96
+        -432,
+        -432
       ],
-      "id": "b75afc63-1e25-442c-b26b-c4ab7f75e9e6",
-      "name": "Setup project ID"
+      "id": "524e0437-16a5-4598-8b76-6e56e34288da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Bind Webhook Event\nSet the app as a follower of the Quire project to receive real-time webhook notifications whenever there are changes within the project.\n\nThis node will automatically trigger the process upon workflow activation.",
+        "height": 192,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -336
+      ],
+      "id": "487f1a4d-bfbb-4c23-8ff5-2e1d567ecbd3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Quire Sync System Setup\nBefore using this template, register your app on Quire. \nRefer to [Quire Blog](https://quire.io/blog/p/Create-Your-Quire-App-with-Quire-API.html) for a step-by-step guide.\n",
+        "height": 144,
+        "width": 384,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        -608
+      ],
+      "id": "ca3305e7-bb31-41fb-8cd0-368a832050b4",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Handling External System Event\nThis node processes events triggered by your external system, initiating the appropriate actions in Quire.",
+        "height": 128,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        -32
+      ],
+      "id": "b7255504-0b34-427a-b6b1-8ab8337368b4",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Handling Quire Events\nPaste the webhook URL into your Quire app to receive events, such as task updates, from Quire when changes occur in the project.",
+        "height": 544,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        208
+      ],
+      "id": "4cb52cb4-9479-4c97-a8b0-f84f0367f32e",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Handle Quire Event Types\nDifferent types of events from Quire can be handled by this node. Ensure the correct action is triggered based on event type.\n\nSee [Quire API Document](https://quire.io/dev/api/#notification-events) for event references.\n",
+        "height": 544,
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        208
+      ],
+      "id": "c7430c2e-3a20-4989-b412-791ea346bbeb",
+      "name": "Sticky Note5"
     },
     {
       "parameters": {
@@ -32,39 +100,25 @@
         "genericAuthType": "oAuth2Api",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"name\": \"{{ $('Post From Client').item.json.body.name }}\"\n}",
+        "jsonBody": "={\n  \"name\": \"{{ $('Receive External System Post Request').item.json.body.name }}\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        288,
-        -96
+        64,
+        -32
       ],
       "id": "856e6a04-dfea-4f72-a787-219068bfdd4d",
-      "name": "CreateTask",
+      "name": "Create Task in Quire",
+      "notesInFlow": false,
       "credentials": {
         "oAuth2Api": {
           "id": "BoU1Ox87Vd2Y8L5Q",
           "name": "Quire.io"
         }
-      }
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "14309cb8-d4ff-4ea3-bbcb-5e6e6e762497",
-        "options": {}
       },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -192,
-        -96
-      ],
-      "id": "7afa3c46-5d1a-45e0-86c1-fb0a76ed8791",
-      "name": "Post From Client",
-      "webhookId": "14309cb8-d4ff-4ea3-bbcb-5e6e6e762497"
+      "notes": "Creates a new task in a Quire project based on the provided project ID and task details."
     },
     {
       "parameters": {
@@ -75,12 +129,13 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -192,
-        64
+        -640,
+        400
       ],
       "id": "ef1f32fe-417e-4845-acb2-0eb5bfba3df0",
-      "name": "Post From Quire",
-      "webhookId": "80186973-d52f-4c5f-a4ac-e0ecbf1fc2c4"
+      "name": "Receive Quire Event",
+      "webhookId": "80186973-d52f-4c5f-a4ac-e0ecbf1fc2c4",
+      "notes": "Receives webhook events from Quire, including task creation, deletion, and updates."
     },
     {
       "parameters": {
@@ -115,11 +170,12 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        96,
-        64
+        -304,
+        400
       ],
       "id": "8ac95894-1cb9-437c-9e25-03cb0496f2b0",
-      "name": "Task added"
+      "name": "Task Added (Quire Event)",
+      "notes": "Handles the event when a new task is added in Quire. Trigger actions to synchronize with the external system."
     },
     {
       "parameters": {
@@ -154,11 +210,12 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        96,
-        240
+        -304,
+        576
       ],
       "id": "1dea8052-d6a1-4c6f-987a-3aa4075ecbc3",
-      "name": "Task deleted"
+      "name": "Task Deleted (Quire Event)",
+      "notes": "Handles the event when a task is deleted in Quire. Trigger actions to remove the task from the sync system."
     },
     {
       "parameters": {
@@ -172,11 +229,29 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        288,
-        64
+        64,
+        400
       ],
       "id": "ba749dc6-246f-4e9d-9212-f062a5ac28dd",
-      "name": "Add task to node server"
+      "name": "Sync Task with External system (Add)",
+      "notes": "Synchronizes a newly added task with the external system's task database via a POST request."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "14309cb8-d4ff-4ea3-bbcb-5e6e6e762497",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -640,
+        -32
+      ],
+      "id": "7afa3c46-5d1a-45e0-86c1-fb0a76ed8791",
+      "name": "Receive External System Post Request",
+      "webhookId": "14309cb8-d4ff-4ea3-bbcb-5e6e6e762497",
+      "notes": "Receives incoming HTTP POST requests from the client system to trigger the sync process."
     },
     {
       "parameters": {
@@ -190,11 +265,55 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        288,
-        240
+        64,
+        576
       ],
       "id": "92d78e88-7b32-4a35-9a80-5cbf9d0b1672",
-      "name": "Delete task from node server"
+      "name": "Sync Task with External System (Delete)",
+      "notes": "Synchronizes task deletion in Quire with the external system by sending a DELETE request."
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://quire.io/api/project/id/{{ $json['Project ID'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"addFollowers\": [\"app\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        -288
+      ],
+      "id": "bce1d082-812d-488e-8647-373a5366340f",
+      "name": "Enable Webhook for Project",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BoU1Ox87Vd2Y8L5Q",
+          "name": "Quire.io"
+        }
+      },
+      "notes": "Sets up a webhook on the Quire project, allowing it to push events to your app (e.g., task creation, deletion)."
+    },
+    {
+      "parameters": {
+        "events": [
+          "activate"
+        ]
+      },
+      "type": "n8n-nodes-base.n8nTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -288
+      ],
+      "id": "1096f9a7-b173-4be4-bf15-285633e2cfd3",
+      "name": "Activate Workflow Trigger",
+      "notes": "Triggers the workflow when it is activated, initiating the setup and sync process."
     },
     {
       "parameters": {
@@ -213,132 +332,131 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        96,
-        -272
+        -304,
+        -288
       ],
       "id": "bc412617-9e2f-49be-80a6-599f4bd1bb9d",
-      "name": "Setup project ID2"
+      "name": "Project ID Configuration",
+      "notes": "Sets the Project ID that is required to identify the project for further actions like task creation or webhook setup."
     },
     {
       "parameters": {
-        "method": "PUT",
-        "url": "=https://quire.io/api/project/id/{{ $json['Project ID'] }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "oAuth2Api",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"addFollowers\": [\"app\"]\n}",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d19a9be-a17a-44e9-8d05-8747a217211a",
+              "name": "Project ID",
+              "value": "project59",
+              "type": "string"
+            }
+          ]
+        },
         "options": {}
       },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        288,
-        -272
+        -304,
+        -32
       ],
-      "id": "bce1d082-812d-488e-8647-373a5366340f",
-      "name": "Turn on webhook",
-      "credentials": {
-        "oAuth2Api": {
-          "id": "BoU1Ox87Vd2Y8L5Q",
-          "name": "Quire.io"
-        }
-      }
+      "id": "b75afc63-1e25-442c-b26b-c4ab7f75e9e6",
+      "name": "Project ID Configuration1",
+      "notes": "Sets the Project ID that is required to identify the project for further actions like task creation or webhook setup."
     },
     {
       "parameters": {
-        "events": [
-          "activate"
-        ]
+        "content": "## Actions on Quire Update\n\nConfigure these nodes to perform the corresponding actions in your external system whenever an update occurs in Quire.",
+        "height": 544,
+        "width": 368
       },
-      "type": "n8n-nodes-base.n8nTrigger",
+      "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -192,
-        -272
+        -32,
+        208
       ],
-      "id": "1096f9a7-b173-4be4-bf15-285633e2cfd3",
-      "name": "On workflow activated"
+      "id": "c2473e5b-7ae4-4667-b934-9899fcab8638",
+      "name": "Sticky Note6"
     }
   ],
   "pinData": {},
   "connections": {
-    "Setup project ID": {
+    "Receive Quire Event": {
       "main": [
         [
           {
-            "node": "CreateTask",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Post From Client": {
-      "main": [
-        [
-          {
-            "node": "Setup project ID",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Post From Quire": {
-      "main": [
-        [
-          {
-            "node": "Task added",
+            "node": "Task Added (Quire Event)",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Task deleted",
+            "node": "Task Deleted (Quire Event)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Task added": {
+    "Task Added (Quire Event)": {
       "main": [
         [
           {
-            "node": "Add task to node server",
+            "node": "Sync Task with External system (Add)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Task deleted": {
+    "Task Deleted (Quire Event)": {
       "main": [
         [
           {
-            "node": "Delete task from node server",
+            "node": "Sync Task with External System (Delete)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Setup project ID2": {
+    "Receive External System Post Request": {
       "main": [
         [
           {
-            "node": "Turn on webhook",
+            "node": "Project ID Configuration1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "On workflow activated": {
+    "Activate Workflow Trigger": {
       "main": [
         [
           {
-            "node": "Setup project ID2",
+            "node": "Project ID Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project ID Configuration": {
+      "main": [
+        [
+          {
+            "node": "Enable Webhook for Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project ID Configuration1": {
+      "main": [
+        [
+          {
+            "node": "Create Task in Quire",
             "type": "main",
             "index": 0
           }
@@ -350,7 +468,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "60fc873e-fa53-4fbd-892b-7f12445ef290",
+  "versionId": "f00ea52a-17f0-4710-8e16-e3504667ca10",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "c0622c7d8daf905418bed3a37676690cb0d11518830fe32ceda24e1c3e35bd6f"
